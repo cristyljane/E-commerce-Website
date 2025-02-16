@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flower Bouquet Shop</title>
+    <style>
+        body { font-family: Arial, sans-serif; 
+            text-align: center;
+            background-color: rgb(241, 237, 232);
+        }
+        .title{
+            text-align: left;
+            font-size: xx-large;
+            color: brown;
+            text-shadow: 4px 4px 6px rgba(202, 94, 94, 0.5); 
+            padding: 10px;
+            margin-left: 40px;
+        }
+        .category { margin-top: 20px; }
+        h2 {
+            font-size: 50px;
+            padding: 4px;
+            color: brown;
+            text-shadow: 4px 4px 6px rgba(202, 94, 94, 0.5); 
+        }        
+        .product-container {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .product {
+            width: 220px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            text-align: center;
+            background-color: #f9f9f9;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .product:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .cart { margin-top: 20px; padding: 10px; border: 1px solid #000; max-width: 600px; margin: 20px auto; }
+        .product img { width: 180px; height: auto; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="title">
+    <h1>Satin Flowers Bouquet Shop</h1>
+    </div>
+
+    <div class="category">
+        <h2>Rose Bouquets</h2>
+        <div id="rose-bouquets" class="product-container"></div>
+    </div>
+    
+    <div class="category">
+        <h2>Sunflower Bouquets</h2>
+        <div id="sunflower-bouquets" class="product-container"></div>
+    </div>
+    
+    <div class="category">
+        <h2>Chocolate Bouquets</h2>
+        <div id="chocolate-bouquets" class="product-container"></div>
+    </div>
+    
+    <h2>Shopping Cart</h2>
+    <div class="cart" id="cart"></div>
+    <h3>Total: P<span id="total-price">0</span></h3>
+    
+    <script>
+        const products = {
+            rose: [
+                // Mini Rose Variations
+                { name: "Mini Rose - Red", price: 50, image: "images/mini_rose_red.jpg" },
+                { name: "Mini Rose - Pink", price: 50, image: "images/mini_rose_pink.jpg" },
+                { name: "Mini Rose - Brown", price: 50, image: "images/mini_rose_brown.jpg" },
+                { name: "Mini Rose - Blue", price: 50, image: "images/mini_rose_blue.jpg" },
+                { name: "Mini Rose - Purple", price: 50, image: "images/mini_rose_purple.jpg" },
+                
+                // 1pc Rose Variations
+                { name: "1pc Rose - Red", price: 85, image: "images/1pc_rose_red.jpg" },
+                { name: "1pc Rose - Pink", price: 85, image: "images/1pc_rose_pink.jpg" },
+                { name: "1pc Rose - Taylor", price: 85, image: "images/1pc_rose_taylor.jpg" },
+                { name: "1pc Rose - Blue", price: 85, image: "images/1pc_rose_blue.jpg" },
+                { name: "1pc Rose - Brown", price: 85, image: "images/1pc_rose_brown.jpg" },
+        
+                // 3pcs Roses Variations
+                { name: "3pcs Roses - Brown", price: 250, image: "images/3pcs_rose_brown.jpg" },
+                { name: "3pcs Roses - Pink", price: 250, image: "images/3pcs_rose_pink.jpg" },
+                { name: "3pcs Roses - Brown 2", price: 250, image: "images/3pcs_rose_brown2.jpg" },
+                { name: "3pcs Roses - Blue", price: 250, image: "images/3pcs_rose_blue.jpg" },
+                { name: "3pcs Roses - Purple", price: 250, image: "images/3pcs_rose_purple.jpg" },
+            ],
+                 // Sunflower Variations
+            sunflower: [
+                { name: "1pc Sunflower - Brown Wrapper", price: 150, image: "images/1pc_sunflower_brown.jpg" },
+                { name: "1pc Sunflower Black - Black Wraper", price: 150, image: "images/1pc_sunflower.jpg" },
+                { name: "1pc Sunflower with Lights", price: 180, image: "images/1pc_sunflower_lights.jpg" },
+                { name: "3pcs Sunflowers", price: 300, image: "images/3pcs_sunflower.jpg" },
+                { name: "3pcs Sunflowers with Lights", price: 330, image: "images/3pcs_sunflower_lights.jpg" }
+            ],
+                // Chocolate Variations
+            chocolate: [
+                { name: "5pcs Inclusion 1", price: 140, image: "images/5pcs_choco1.jpg" },
+                {name: "5pcs Inclusion 2", price: 140, image: "images/5pcs_choco2.jpg" },
+                {name: "5pcs Inclusion 3", price: 140, image: "images/5pcs_choco3.jpg" },
+                { name: "8pcs Inclusion", price: 230, image: "images/8pcs_choco.jpg" },
+                { name: "3pcs Roses with 5pcs Chocolate", price: 250, image: "images/3pcs_rose_5pcs_choco.jpg" },
+            ]
+        };
+        
+
+        const cart = [];
+
+        function displayProducts(category, elementId) {
+            const productList = document.getElementById(elementId);
+            productList.innerHTML = "";
+            products[category].forEach((product, index) => {
+                const productDiv = document.createElement("div");
+                productDiv.classList.add("product");
+                productDiv.innerHTML = `
+                    <img src="${product.image}" alt="${product.name}"><br>
+                    <strong>${product.name}</strong><br>
+                    P${product.price} <br>
+                    <button onclick="addToCart('${category}', ${index})">Add to Cart</button>
+                `;
+                productList.appendChild(productDiv);
+            });
+        }
+
+         // Add to Cart
+        function addToCart(category, index) {
+            cart.push(products[category][index]);
+            displayCart();
+        }
+
+         // Remove Button
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            displayCart();
+        }
+
+        // Display Cart Function
+        function displayCart() {
+            const cartDiv = document.getElementById("cart");
+            cartDiv.innerHTML = "";
+            let totalPrice = 0;
+        
+            cart.forEach((product, index) => {
+                const cartItem = document.createElement("div");
+                cartItem.style.display = "flex";
+                cartItem.style.alignItems = "center";
+                cartItem.style.justifyContent = "space-between";
+                cartItem.style.marginBottom = "10px";
+                cartItem.style.borderBottom = "1px solid #ddd"; 
+                cartItem.style.padding = "5px";
+        
+                // Product Image
+                const productImage = document.createElement("img");
+                productImage.src = product.image;
+                productImage.alt = product.name;
+                productImage.style.width = "50px";
+                productImage.style.height = "50px";
+                productImage.style.marginRight = "10px";
+        
+                // Product Details (Name & Price)
+                const productDetails = document.createElement("div");
+                productDetails.style.flex = "1"; // Allows the text to expand
+                productDetails.innerHTML = `
+                    <strong>${product.name}</strong> - P${product.price}
+                `;
+        
+                // Remove Button
+                const removeButton = document.createElement("button");
+                removeButton.textContent = "Remove";
+                removeButton.style.marginLeft = "10px";
+                removeButton.onclick = () => removeFromCart(index);
+        
+                // Append elements in a row
+                cartItem.appendChild(productImage);
+                cartItem.appendChild(productDetails);
+                cartItem.appendChild(removeButton);
+                cartDiv.appendChild(cartItem);
+        
+                totalPrice += product.price;
+            });
+        
+            document.getElementById("total-price").textContent = totalPrice;
+        }        
+
+        displayProducts("rose", "rose-bouquets");
+        displayProducts("sunflower", "sunflower-bouquets");
+        displayProducts("chocolate", "chocolate-bouquets");
+    </script>
+</body>
+</html>
